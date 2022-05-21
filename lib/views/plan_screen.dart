@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:master_plan/models/data_layer.dart';
 
+
+
 class PlanScreen extends StatefulWidget {
-  const PlanScreen({Key? key}) : super(key: key);
+  final Plan? plan;
+  const PlanScreen({Key? key, this.plan}) : super(key: key);
 
   @override
   _PlanScreenState createState() => _PlanScreenState();
 }
 
 class _PlanScreenState extends State<PlanScreen> {
-  final plan = Plan();
+  Plan? get plan => widget.plan;
   late ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(
-        child: Text('MasterPlanner'),)),
-      body: _buildList(),
+      appBar: AppBar(
+          title: Center(
+        child: Text('Master Planner'),
+      )),
+      body: Column(children: <Widget>[
+        Expanded(child: _buildList()),
+        SafeArea(child: Text(plan!.completenessMessage))
+      ]),
       floatingActionButton: _buildAddTaskButton(),
     );
   }
@@ -26,7 +34,7 @@ class _PlanScreenState extends State<PlanScreen> {
     return FloatingActionButton(
       onPressed: () {
         setState(() {
-          plan.tasks.add(Task());
+          plan!.tasks.add(Task());
         });
       },
       child: Icon(Icons.add),
@@ -36,9 +44,9 @@ class _PlanScreenState extends State<PlanScreen> {
   Widget _buildList() {
     return ListView.builder(
         controller: scrollController,
-        itemCount: plan.tasks.length,
+        itemCount: plan!.tasks.length,
         itemBuilder: (context, index) => _buildTaskTile(
-              plan.tasks[index],
+              plan!.tasks[index],
             ));
   }
 
@@ -51,30 +59,28 @@ class _PlanScreenState extends State<PlanScreen> {
               task.complete = selected!;
             });
           }),
-      title: TextField(
-        onChanged: (text) {
+      title: TextFormField(
+        initialValue: task.description,
+        onFieldSubmitted: (text) {
           setState(() {
             task.description = text;
           });
         },
       ),
     );
-
-
-    }
-
+  }
 
   @override
   void initState() {
     super.initState();
-    scrollController = ScrollController();
-    addListener(() {
-      FocusScope.of(context).requestFocus(FocusNode());
-    });
+    scrollController = ScrollController()
+      ..addListener(() {
+        FocusScope.of(context).requestFocus(FocusNode());
+      });
   }
 
   @override
-  void dispose(){
+  void dispose() {
     scrollController.dispose();
     super.dispose();
   }
