@@ -60,7 +60,7 @@ class _PlanCreatorScreenState extends State<PlanCreatorScreen> {
     setState(() {});
 
     final plan = Plan()..name = text;
-    PlanProvider.of(context).add(plan);
+    PlanProvider.of(context).plans;
     textController.clear;
     FocusScope.of(context).requestFocus(FocusNode());
     setState(() {});
