@@ -4,7 +4,7 @@ import 'package:master_plan/views/plan_creator_screen.dart';
 import 'package:master_plan/views/plan_screen.dart';
 
 
-void main() => runApp(MasterPlanApp());
+void main() => runApp(PlanProvider(child: MasterPlanApp()));
 
 class MasterPlanApp extends StatelessWidget {
   const MasterPlanApp({Key? key}) : super(key: key);

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:master_plan/models/data_layer.dart';
-
-
+import 'package:master_plan/plan_provider.dart';
 
 class PlanScreen extends StatefulWidget {
   final Plan? plan;
+
   const PlanScreen({Key? key, this.plan}) : super(key: key);
 
   @override
@@ -33,9 +33,9 @@ class _PlanScreenState extends State<PlanScreen> {
   Widget _buildAddTaskButton() {
     return FloatingActionButton(
       onPressed: () {
-        setState(() {
-          plan!.tasks.add(Task());
-        });
+        final controller = PlanProvider.of(context);
+        controller.createNewTask(plan!);
+        setState(() {});
       },
       child: Icon(Icons.add),
     );
@@ -51,21 +51,31 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   Widget _buildTaskTile(Task task) {
-    return ListTile(
-      leading: Checkbox(
-          value: task.complete,
-          onChanged: (selected) {
+    return Dismissible(
+      key: ValueKey(task),
+      background: Container(color: Colors.red),
+      direction: DismissDirection.endToStart,
+      onDismissed: (_) {
+        final controller = PlanProvider.of(context);
+        controller.deleteTask(plan!, task);
+        setState(() {});
+      },
+      child: ListTile(
+        leading: Checkbox(
+            value: task.complete,
+            onChanged: (selected) {
+              setState(() {
+                task.complete = selected!;
+              });
+            }),
+        title: TextFormField(
+          initialValue: task.description,
+          onFieldSubmitted: (text) {
             setState(() {
-              task.complete = selected!;
+              task.description = text;
             });
-          }),
-      title: TextFormField(
-        initialValue: task.description,
-        onFieldSubmitted: (text) {
-          setState(() {
-            task.description = text;
-          });
-        },
+          },
+        ),
       ),
     );
   }
